@@ -1,0 +1,54 @@
+// Define the pins for the ultrasonic sensor
+const int trigPin = 7;
+const int echoPin = 6;
+
+// Define the pin for the LED
+const int ledPin = 9; // Built-in LED on most Arduino boards
+
+// Define constants for calculating distance
+const long soundSpeed = 343; // Speed of sound in m/s at 20°C
+const int maxDistance = 20; // Maximum distance for reliable measurements in cm
+
+void setup() {
+  // Initialize serial communication for debugging
+  Serial.begin(9600);
+
+  // Initialize the trigPin as an OUTPUT
+  pinMode(trigPin, OUTPUT);
+  // Initialize the echoPin as an INPUT
+  pinMode(echoPin, INPUT);
+
+  // Initialize the LED pin as an OUTPUT
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // Trigger an ultrasonic pulse to measure distance
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Measure the duration of the echo pulse
+  long duration = pulseIn(echoPin, HIGH);
+
+  // Calculate the distance in centimeters
+  long distance = (duration * soundSpeed) / (2 * 10000); // Convert to cm
+
+  // Print the distance to the serial monitor
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Check if an obstacle is within the specified range
+  if (distance < maxDistance) {
+    digitalWrite(ledPin, HIGH); // Turn on the LED
+    Serial.println("Obstacle Detected");
+  } else {
+    digitalWrite(ledPin, LOW); // Turn off the LED
+  }
+
+  // Wait for a short delay before taking another measurement
+  delay(100);
+}
